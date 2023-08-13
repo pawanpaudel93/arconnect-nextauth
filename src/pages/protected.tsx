@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { Session, getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
 
-export default function ProtectedPage() {
-  const { data: session } = useSession();
+export default function ProtectedPage({
+  currentSession: session,
+}: {
+  currentSession: Session;
+}) {
   const [content, setContent] = useState();
 
   // Fetch content from protected route
@@ -36,4 +40,27 @@ export default function ProtectedPage() {
       </p>
     </div>
   );
+}
+
+export async function getServerSideProps(context: any) {
+  const session = await getServerSession(
+    context.req,
+    context.res,
+    authOptions(context.req)
+  );
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      currentSession: JSON.parse(JSON.stringify(session)),
+    },
+  };
 }

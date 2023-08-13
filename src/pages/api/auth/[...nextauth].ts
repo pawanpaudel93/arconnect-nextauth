@@ -59,7 +59,7 @@ export const authOptions = (req: NextApiRequest): AuthOptions => {
 
   const isDefaultSigninPage =
     req.method === "GET" &&
-    req.query.nextauth &&
+    req.query?.nextauth &&
     req.query.nextauth.includes("signin");
 
   // Hide Sign-In with Ethereum from default sign page
