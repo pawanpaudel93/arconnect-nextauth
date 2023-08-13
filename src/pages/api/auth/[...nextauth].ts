@@ -1,11 +1,12 @@
 import { arweave, base64StringToUint8Array } from "@/utils";
 import { JWKInterface } from "arweave/node/lib/wallet";
-import NextAuth from "next-auth";
+import { NextApiRequest, NextApiResponse } from "next";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
-export default async function auth(req: any, res: any) {
+export const authOptions = (req: NextApiRequest): AuthOptions => {
   const providers = [
     CredentialsProvider({
       name: "Arweave",
@@ -57,15 +58,16 @@ export default async function auth(req: any, res: any) {
   ];
 
   const isDefaultSigninPage =
-    req.method === "GET" && req.query.nextauth.includes("signin");
+    req.method === "GET" &&
+    req.query.nextauth &&
+    req.query.nextauth.includes("signin");
 
   // Hide Sign-In with Ethereum from default sign page
   if (isDefaultSigninPage) {
     providers.pop();
   }
 
-  return await NextAuth(req, res, {
-    // https://next-auth.js.org/configuration/providers/oauth
+  return {
     providers,
     session: {
       strategy: "jwt",
@@ -79,5 +81,11 @@ export default async function auth(req: any, res: any) {
         return session;
       },
     },
-  });
-}
+  };
+};
+
+const Auth = (req: NextApiRequest, res: NextApiResponse) => {
+  return NextAuth(req, res, authOptions(req));
+};
+
+export default Auth;
