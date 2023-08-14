@@ -25,12 +25,22 @@ export async function nextAuthSignIn() {
 
     const message = new TextEncoder().encode("Sign in with ArConnect.");
 
-    const signature = uint8ArrayToBase64String(
-      await arweaveWallet.signature(message, {
-        name: "RSA-PSS",
-        saltLength: 32,
-      })
-    );
+    let signature: string;
+    let isHashed = false;
+    try {
+      signature = uint8ArrayToBase64String(
+        // @ts-expect-error
+        await arweaveWallet.signMessage(message)
+      );
+      isHashed = true;
+    } catch (e) {
+      signature = uint8ArrayToBase64String(
+        await arweaveWallet.signature(message, {
+          name: "RSA-PSS",
+          saltLength: 32,
+        })
+      );
+    }
 
     const publicKey = await arweaveWallet.getActivePublicKey();
 
@@ -39,6 +49,7 @@ export async function nextAuthSignIn() {
       redirect: false,
       signature,
       publicKey,
+      isHashed,
     });
 
     if (response?.status === 401) {

@@ -27,6 +27,11 @@ export const authOptions = (req: NextApiRequest): AuthOptions => {
           type: "text",
           placeholder: "0x0",
         },
+        isHashed: {
+          label: "Is Hashed",
+          type: "boolean",
+          placeholder: "false",
+        },
       },
       async authorize(credentials) {
         try {
@@ -37,6 +42,11 @@ export const authOptions = (req: NextApiRequest): AuthOptions => {
           ) {
             const message = base64StringToUint8Array(credentials?.message);
             const signature = base64StringToUint8Array(credentials?.signature);
+            const isHashed = credentials.isHashed === "true";
+            const hashOrMesage = isHashed
+              ? await crypto.subtle.digest("SHA-256", message)
+              : message;
+
             const publicJWK: JsonWebKey = {
               e: "AQAB",
               ext: true,
@@ -56,12 +66,12 @@ export const authOptions = (req: NextApiRequest): AuthOptions => {
               ["verify"]
             );
 
-            // verify the signature by matching it with the message
+            // verify the signature by matching it with the hash or message
             const isValidSignature = await crypto.subtle.verify(
               { name: "RSA-PSS", saltLength: 32 },
               verificationKey,
               signature,
-              message
+              hashOrMesage
             );
 
             if (isValidSignature) {
