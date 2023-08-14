@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Session, getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
+import { useRouter } from "next/router";
 
 export default function ProtectedPage({
   currentSession: session,
@@ -8,6 +9,7 @@ export default function ProtectedPage({
   currentSession: Session;
 }) {
   const [content, setContent] = useState();
+  const router = useRouter();
 
   // Fetch content from protected route
   useEffect(() => {
@@ -33,11 +35,19 @@ export default function ProtectedPage({
 
   // If session exists, display content
   return (
-    <div className="p-12">
+    <div className="p-12 flex flex-col place-content-center place-items-center">
       <h1>Protected Page</h1>
       <p>
         <strong>{content ?? "\u00a0"}</strong>
       </p>
+      <button
+        className="mt-5 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+        onClick={() => {
+          router.push("/");
+        }}
+      >
+        Go back
+      </button>
     </div>
   );
 }
