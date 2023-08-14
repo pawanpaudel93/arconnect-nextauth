@@ -41,7 +41,7 @@ export default function ProtectedPage({
         <strong>{content ?? "\u00a0"}</strong>
       </p>
       <button
-        className="mt-5 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+        className="mt-5 btn btn-primary"
         onClick={() => {
           router.push("/");
         }}
