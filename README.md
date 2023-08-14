@@ -26,7 +26,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome! \ Feel free to check [issues page](https://github.com/pawanpaudel93/arconnect-nextauth/issues).
+Contributions, issues, and feature requests are welcome! <br /> Feel free to check [issues page](https://github.com/pawanpaudel93/arconnect-nextauth/issues).
 
 ## Show your support
 
